@@ -47,17 +47,26 @@
   (let* ((repo (github-clone-info user repo-id))
          (forks (oref (gh-repos-forks-list (gh-repos-api "api") repo) :data)))
     (cl-loop for fork in forks
-             collect (cons (oref (oref fork :owner) :login) (oref fork :git-url)))))
+             collect (cons (oref (oref fork :owner) :login)
+                           (oref fork :git-url)))))
+
+(defun github-clone-upstream (repo)
+  (if (eq (oref repo :fork) t)
+      (cons "upstream" (oref (oref repo :parent) :git-url))
+    nil))
 
 (defun github-clone-repo (repo directory)
   (let* ((name (oref repo :name))
         (target (expand-file-name name directory))
-        (repo-url (oref repo :git-url))
-        (upstream-url (oref (oref repo :parent) :git-url)))
-    (message "Cloning %s into %s with upstream %s" name target upstream-url)
+        (repo-url (oref repo :git-url)))
+    (message "Cloning %s into %s" name target)
     (shell-command (format "git clone %s %s" repo-url target))
     (magit-status target)
-    (magit-add-remote "upstream" upstream-url)))
+    (if-let (upstream (github-clone-upstream repo))
+        (progn
+          (message "Adding remote %s" upstream)
+          (magit-add-remote (car upstream) (cdr upstream))))))
+
 
 (provide 'github-clone)
 ;;; github-clone.el ends here
