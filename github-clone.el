@@ -43,6 +43,12 @@
     (gh-repos-repo-get repo-id user)
     (oref :data)))
 
+(defun github-clone-remotes (user repo-id)
+  (let* ((repo (github-clone-info user repo-id))
+         (forks (oref (gh-repos-forks-list (gh-repos-api "api") repo) :data)))
+    (cl-loop for fork in forks
+             collect (cons (oref (oref fork :owner) :login) (oref fork :git-url)))))
+
 (defun github-clone-repo (repo directory)
   (let* ((name (oref repo :name))
         (target (expand-file-name name directory))
