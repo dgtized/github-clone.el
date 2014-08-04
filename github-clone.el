@@ -83,6 +83,14 @@
             (oref (oref (gh-users-get (gh-users-api "api")) :data) :login))
     github-clone--user))
 
+(defun github-clone (user-repo-url directory)
+  (interactive
+   (list (read-from-minibuffer "Url or User/Repo: ")
+         (read-directory-name "Directory: " nil default-directory t)))
+  (let* ((name (github-clone-repo-name user-repo-url))
+         (repo (github-clone-fork (car name) (cdr name))))
+    (github-clone-repo repo directory)))
+
 
 (provide 'github-clone)
 ;;; github-clone.el ends here
