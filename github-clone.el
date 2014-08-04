@@ -67,10 +67,10 @@
     (message "Cloning %s into %s" name target)
     (shell-command (format "git clone %s %s" repo-url target))
     (magit-status target)
-    (if-let (upstream (github-clone-upstream repo))
-        (progn
-          (message "Adding remote %s" upstream)
-          (magit-add-remote (car upstream) (cdr upstream))))))
+    (let ((upstream (github-clone-upstream repo)))
+      (when upstream
+        (message "Adding remote %s" upstream)
+        (magit-add-remote (car upstream) (cdr upstream))))))
 
 (defun github-clone-repo-name (url)
   (cond ((string-match "\.git$" url)
