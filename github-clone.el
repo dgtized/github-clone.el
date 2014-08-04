@@ -85,10 +85,10 @@
 
 (defvar github-clone--user nil "Cache for current github login")
 (defun github-clone-user-name ()
-  (if (null github-clone--user)
-      (setq github-clone--user
-            (oref (oref (gh-users-get (gh-users-api "api")) :data) :login))
-    github-clone--user))
+  (unless github-clone--user
+    (setq github-clone--user
+          (oref (oref (gh-users-get (gh-users-api "api")) :data) :login)))
+  github-clone--user)
 
 ;;;###autoload
 (defun github-clone (user-repo-url directory)
