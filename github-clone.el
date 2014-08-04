@@ -67,6 +67,22 @@
           (message "Adding remote %s" upstream)
           (magit-add-remote (car upstream) (cdr upstream))))))
 
+(defun github-clone-repo-name (url)
+  (cond ((string-match "\.git$" url)
+         (github-clone-repo-name (replace-match "" nil nil url)))
+        ((string-match "\\([[:alnum:]\-_.]+\\)/\\([[:alnum:]\-_.]+\\)$" url)
+         (cons (match-string 1 url) (match-string 2 url)))
+        ((string-match "^\\([[:alnum:]\-_.]+\\)$" url)
+         (cons (github-clone-user-name) (match-string 1 url)))
+        (t (error "Cannot parse repo name %s" url))))
+
+(defvar github-clone--user nil "Cache for current github login")
+(defun github-clone-user-name ()
+  (if (null github-clone--user)
+      (setq github-clone--user
+            (oref (oref (gh-users-get (gh-users-api "api")) :data) :login))
+    github-clone--user))
+
 
 (provide 'github-clone)
 ;;; github-clone.el ends here
