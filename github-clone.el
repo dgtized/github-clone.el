@@ -57,8 +57,10 @@
 
 (defun github-clone-repo (repo directory)
   (let* ((name (oref repo :name))
-        (target (expand-file-name name directory))
-        (repo-url (oref repo :git-url)))
+         (target (if (file-exists-p directory)
+                     (expand-file-name name directory)
+                   directory))
+         (repo-url (oref repo :git-url)))
     (message "Cloning %s into %s" name target)
     (shell-command (format "git clone %s %s" repo-url target))
     (magit-status target)
