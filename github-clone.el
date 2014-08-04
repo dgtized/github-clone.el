@@ -1,10 +1,11 @@
 ;;; github-clone.el --- Fork and clone github repos  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2014  Charles Comstock
+;; Copyright (C) 2014  Charles L.G. Comstock
 
-;; Author: Charles Comstock <clgc@nocturnal>
+;; Author: Charles L.G. Comstock <dgtized@gmail.com>
 ;; Created: 2 Aug 2014
 ;; Version: 0.1
+;; URL: https://github.com/dgtized/github-clone.el
 ;; Keywords: vc, tools
 ;; Package-Requires: ((gh "0.7.2") (magit "1.2.0"))
 
@@ -83,7 +84,7 @@
          (cons (github-clone-user-name) (match-string 1 url)))
         (t (error "Cannot parse repo name %s" url))))
 
-(defvar github-clone--user nil "Cache for current github login")
+(defvar github-clone--user nil "Cache for current github login.")
 (defun github-clone-user-name ()
   (unless github-clone--user
     (setq github-clone--user
@@ -92,7 +93,7 @@
 
 ;;;###autoload
 (defun github-clone (user-repo-url directory)
-  "Fork and clone USER-REPO-URL into DIRECTORY
+  "Fork and clone USER-REPO-URL into DIRECTORY.
 
 USER-REPO-URL can be any of the forms:
 

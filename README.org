@@ -1,0 +1,49 @@
+#+TITLE: github-clone.el
+#+AUTHOR: Charles L.G. Comstock
+#+EMAIL: dgtized@gmail.com
+
+* Introduction
+
+Easily fork and clone github repos, while ensuring an upstream remote is added referencing the parent repo automatically.
+
+* Usage
+
+~M-x github-clone~ will prompt for a repository and directory to clone to. In one shot, it will use the github api to fork the repo if you are not the owner, clone the repo to the specified directory, and add a remote called upstream if the repository is a fork.
+
+As example:
+
+#+BEGIN_SRC emacs-lisp
+(github-clone "dgtized/github-clone.el" "~")
+#+END_SRC
+
+[[https://github.com/sigma/gh.el][gh.el]] will prompt for a github username and password to generate an oauth key. See documentation on [[https://github.com/defunkt/gist.el][gist.el]] and [[*GitHub%20API][GitHub API]] for more details.
+
+After creating an API key, =dgtized/github-clone.el= will be forked to the user authorized by the API key. The forked repository will be cloned into ~$HOME/github-clone.el~, and finally the remote =upstream= will added to the repo as =git@github.com:dgtized/github-clone.el.git=.
+
+* GitHub API Keys
+
+[[https://github.com/sigma/gh.el][gh.el]] uses =~/.gitconfig= to store the API keys. When the key is created it will store the key at the end of =~/.gitconfig=.
+
+** Permissions and Revoking
+
+If [[gh.el]] has trouble generating an API key, visit [[https://github.com/settings/applications][Application Settings]], and generate a new personal access token with permissions for =repo=, and =user=. Include permissions for =gist= to maintain compatibility with [[https://github.com/defunkt/gist.el][gist.el]].
+
+** Securing the keys
+
+=~/.gitconfig= is a useful dotfile to version in a git repository. So how can we avoid storing API keys in the dotfile repo? Move the API configuration into =~/.gitconfig.private=.
+
+#+BEGIN_EXAMPLE
+[github]
+  user = $USER
+  oauth-token = $KEY
+#+END_EXAMPLE
+
+Replace the API keys configuration in =~/.gitconfig= with the inclusion below.
+
+#+BEGIN_EXAMPLE
+[include]
+  path = ~/.gitconfig.private
+#+END_EXAMPLE
+
+
+
