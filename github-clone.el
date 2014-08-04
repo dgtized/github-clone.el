@@ -39,15 +39,12 @@
 (require 'gh-users)
 (require 'gh-repos)
 (require 'magit)
-(require 'subr-x)
 
 (defun github-clone-fork (repo)
   (oref (gh-repos-fork (gh-repos-api "api") repo) :data))
 
 (defun github-clone-info (user repo-id)
-  (thread-first (gh-repos-api "api")
-    (gh-repos-repo-get repo-id user)
-    (oref :data)))
+  (oref (gh-repos-repo-get (gh-repos-api "api") repo-id user) :data))
 
 (defun github-clone-remotes (user repo-id)
   (let* ((repo (github-clone-info user repo-id))
