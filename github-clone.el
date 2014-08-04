@@ -6,7 +6,7 @@
 ;; Created: 2 Aug 2014
 ;; Version: 0.1
 ;; Keywords: vc, tools
-;; Package-Requires: ((magit "1.2.0") (gh.el "20140706"))
+;; Package-Requires: ((eieio "1.3") (gh "0.7.2") (magit "1.2.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

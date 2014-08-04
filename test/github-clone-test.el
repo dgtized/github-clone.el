@@ -36,8 +36,8 @@
                  (cons "user" "repo"))))
 
 (ert-deftest github-clone-repo-name-matches-url ()
-  (should (equal (github-clone-repo-name "https://github.com/clojure-emacs/cider")
-                 (cons "clojure-emacs" "cider"))))
+  (should (equal (github-clone-repo-name "https://github.com/dgtized/github-clone.el")
+                 (cons "dgtized" "github-clone.el"))))
 
 (ert-deftest github-clone-repo-name-matches-git-url ()
   (should (equal (github-clone-repo-name "git@github.com:clojure-emacs/cider.git")
