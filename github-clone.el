@@ -33,10 +33,8 @@
 (require 'gh-repos)
 (require 'subr-x)
 
-(defun github-clone-fork (user repo-id)
-  (let* ((api (gh-repos-api "api"))
-         (repo (github-clone-info user repo-id)))
-    (oref (gh-repos-fork api repo) :data)))
+(defun github-clone-fork (repo)
+  (oref (gh-repos-fork (gh-repos-api "api") repo) :data))
 
 (defun github-clone-info (user repo-id)
   (thread-first (gh-repos-api "api")
@@ -90,9 +88,13 @@
    (list (read-from-minibuffer "Url or User/Repo: ")
          (read-directory-name "Directory: " nil default-directory t)))
   (let* ((name (github-clone-repo-name user-repo-url))
-         (repo (github-clone-fork (car name) (cdr name))))
-    (github-clone-repo repo directory)))
-
+         (repo (github-clone-info (car name) (cdr name))))
+    (if (oref repo :git-url)
+        (let ((fork (github-clone-fork repo)))
+          (if (oref fork :git-url)
+              (github-clone-repo fork directory)
+            (error "Unable to fork %s" user-repo-url)))
+      (error "Repository %s does not exist" user-repo-url))))
 
 (provide 'github-clone)
 ;;; github-clone.el ends here
