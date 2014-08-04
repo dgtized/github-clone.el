@@ -12,7 +12,7 @@ build : install $(OBJECTS)
 
 .PHONY: test
 test : build
-	$(CASK) exec ert-runner -L .
+	$(CASK) exec ert-runner
 
 .PHONY: clean
 clean :
