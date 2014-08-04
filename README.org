@@ -6,6 +6,8 @@
 
 Easily fork and clone github repos, while ensuring an upstream remote is added referencing the parent repo automatically.
 
+[[https://travis-ci.org/dgtized/github-clone.el][https://travis-ci.org/dgtized/github-clone.el.png?branch=master]]
+
 * Usage
 
 ~M-x github-clone~ will prompt for a repository and directory to clone to. In one shot, it will use the github api to fork the repo if you are not the owner, clone the repo to the specified directory, and add a remote called upstream if the repository is a fork.
