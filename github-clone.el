@@ -6,7 +6,7 @@
 ;; Created: 2 Aug 2014
 ;; Version: 0.1
 ;; Keywords: vc, tools
-;; Package-Requires: ((eieio "1.3") (gh "0.7.2") (magit "1.2.0"))
+;; Package-Requires: ((gh "0.7.2") (magit "1.2.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -23,7 +23,14 @@
 
 ;;; Commentary:
 
-;; 
+;; `github-clone' will automatically fork a repo to the user, clone it locally to
+;; a specified directory, and add a remote named upstream if repository is a
+;; fork.
+
+;;; Todo:
+
+;; Use `github-clone-remotes' to add named remotes easily for repositories in
+;; the same network.
 
 ;;; Code:
 
@@ -83,7 +90,28 @@
             (oref (oref (gh-users-get (gh-users-api "api")) :data) :login))
     github-clone--user))
 
+;;;###autoload
 (defun github-clone (user-repo-url directory)
+  "Fork and clone USER-REPO-URL into DIRECTORY
+
+USER-REPO-URL can be any of the forms:
+
+  repository
+  user/repository
+  organization/repository
+  https://github.com/user/repository
+  git@github.com:user/repository.git
+  https://github.com/user/repository.el.git
+
+If repository is already owned by user, it will simply clone the
+repository to DIRECTORY, otherwise it will attempt to fork the
+repository to user and clone the fork to DIRECTORY.
+
+If DIRECTORY does not exist, it will be created, otherwise it
+expands the repository name in the specified directory.
+
+If repository is a fork then the upstream remote will be added
+automatically."
   (interactive
    (list (read-from-minibuffer "Url or User/Repo: ")
          (read-directory-name "Directory: " nil default-directory t)))
