@@ -14,9 +14,7 @@ build : elpa $(OBJECTS)
 
 .PHONY: test
 test : build
-	$(CASK) exec $(EMACS) --no-site-file --no-site-lisp --batch \
-		$(EMACSFLAGS) \
-		-l test/run-tests
+	$(CASK) exec ert-runner -L .
 
 .PHONY: clean
 clean :

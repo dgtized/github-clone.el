@@ -35,9 +35,9 @@
 ;;; Code:
 
 (require 'eieio)
-
-(require 'gh)
+(require 'gh-users)
 (require 'gh-repos)
+(require 'magit)
 (require 'subr-x)
 
 (defun github-clone-fork (repo)

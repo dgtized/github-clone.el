@@ -24,10 +24,11 @@
 
 ;;; Code:
 
+(require 'noflet)
 (require 'github-clone)
 
 (ert-deftest github-clone-repo-name-matches-repo ()
-  (flet ((github-clone-user-name () "login"))
+  (noflet ((github-clone-user-name () "login"))
     (should (equal (github-clone-repo-name "repo")
                    (cons "login" "repo")))))
 
