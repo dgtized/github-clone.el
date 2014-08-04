@@ -4,13 +4,11 @@ CASK = cask
 
 OBJECTS = github-clone.elc
 
-elpa:
+install:
 	$(CASK) install
-	$(CASK) update
-	touch $@
 
 .PHONY: build
-build : elpa $(OBJECTS)
+build : install $(OBJECTS)
 
 .PHONY: test
 test : build
@@ -19,7 +17,6 @@ test : build
 .PHONY: clean
 clean :
 	rm -f $(OBJECTS)
-	rm -f elpa
 	rm -rf .cask # Clean packages installed for development
 
 %.elc : %.el
