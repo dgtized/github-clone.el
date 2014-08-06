@@ -24,7 +24,15 @@ After creating an API key, =dgtized/github-clone.el= will be forked to the user 
 
 * Install
 
-Not yet submitted to [[https://melpa.milkbox.net][MELPA]], so download [[https://github.com/dgtized/github-clone.el/blob/master/github-clone.el][github-clone.el]],
+github-clone.el uses [[https://github.com/sigma/gh.el][gh.el]] as a dependency, so it's easiest to install via package.el.
+
+** Via Package.el
+
+Using the [[https://melpa.milkbox.net][MELPA]] package archive, 
+
+ : M-x package-install [RET] github-clone [RET]
+
+Or manually by downloading [[https://github.com/dgtized/github-clone.el/blob/master/github-clone.el][github-clone.el]],
 
  : $ wget https://raw.githubusercontent.com/dgtized/github-clone.el/master/github-clone.el
 
