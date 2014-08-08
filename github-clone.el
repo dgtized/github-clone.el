@@ -122,5 +122,10 @@ automatically."
             (error "Unable to fork %s" user-repo-url)))
       (error "Repository %s does not exist" user-repo-url))))
 
+;;;###autoload
+(defun eshell/github-clone (user-repo-url &optional directory)
+  "Eshell alias uses current directory as default."
+  (funcall 'github-clone user-repo-url (or directory default-directory)))
+
 (provide 'github-clone)
 ;;; github-clone.el ends here
