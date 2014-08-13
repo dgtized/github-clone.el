@@ -40,6 +40,23 @@
 (require 'gh-repos)
 (require 'magit)
 
+(defun widget-keyword-validate (w)
+  (let ((v (widget-value w)))
+    (if (keywordp v)
+        nil
+      (widget-put w :error (format "Symbol `%s' is not a keyword" v))
+      w)))
+(define-widget 'keyword 'symbol
+  "A keyword (symbol starting with `:')."
+  :validate #'widget-keyword-validate)
+(defcustom github-clone-url-slot :ssh-url
+  "Which slot to use as the URL to clone."
+  :type '(choice (const :tag "SSH" :ssh-url)
+                 (const :tag "HTTPS" :clone-url)
+                 (const :tag "Git" :git-url)
+                 (keyword :tag "Custom slot" :nil))
+  :group 'github-clone)
+
 (defun github-clone-fork (repo)
   (oref (gh-repos-fork (gh-repos-api "api") repo) :data))
 
@@ -51,11 +68,11 @@
          (forks (oref (gh-repos-forks-list (gh-repos-api "api") repo) :data)))
     (cl-loop for fork in forks
              collect (cons (oref (oref fork :owner) :login)
-                           (oref fork :ssh-url)))))
+                           (eieio-oref fork github-clone-url-slot)))))
 
 (defun github-clone-upstream (repo)
   (if (eq (oref repo :fork) t)
-      (cons "upstream" (oref (oref repo :parent) :ssh-url))
+      (cons "upstream" (eieio-oref (oref repo :parent) github-clone-url-slot))
     nil))
 
 (defun github-clone-repo (repo directory)
@@ -63,7 +80,8 @@
          (target (if (file-exists-p directory)
                      (expand-file-name name directory)
                    directory))
-         (repo-url (oref repo :ssh-url)))
+         (repo-url (eieio-oref repo github-clone-url-slot)))
+    (message "Using repo url: \"%s\"" repo-url)
     (message "Cloning %s into %s" name target)
     (shell-command (format "git clone %s %s" repo-url target))
     (magit-status target)
@@ -115,9 +133,9 @@ automatically."
          (read-directory-name "Directory: " nil default-directory t)))
   (let* ((name (github-clone-repo-name user-repo-url))
          (repo (github-clone-info (car name) (cdr name))))
-    (if (oref repo :ssh-url)
+    (if (eieio-oref repo github-clone-url-slot)
         (let ((fork (github-clone-fork repo)))
-          (if (oref fork :ssh-url)
+          (if (eieio-oref fork github-clone-url-slot)
               (github-clone-repo fork directory)
             (error "Unable to fork %s" user-repo-url)))
       (error "Repository %s does not exist" user-repo-url))))
