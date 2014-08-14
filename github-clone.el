@@ -40,21 +40,11 @@
 (require 'gh-repos)
 (require 'magit)
 
-(defun widget-keyword-validate (w)
-  (let ((v (widget-value w)))
-    (if (keywordp v)
-        nil
-      (widget-put w :error (format "Symbol `%s' is not a keyword" v))
-      w)))
-(define-widget 'keyword 'symbol
-  "A keyword (symbol starting with `:')."
-  :validate #'widget-keyword-validate)
 (defcustom github-clone-url-slot :ssh-url
   "Which slot to use as the URL to clone."
   :type '(choice (const :tag "SSH" :ssh-url)
                  (const :tag "HTTPS" :clone-url)
-                 (const :tag "Git" :git-url)
-                 (keyword :tag "Custom slot" :nil))
+                 (const :tag "Git" :git-url))
   :group 'github-clone)
 
 (defun github-clone-fork (repo)
