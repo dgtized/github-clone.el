@@ -73,7 +73,7 @@
          (repo-url (eieio-oref repo github-clone-url-slot)))
     (message "Using repo url: \"%s\"" repo-url)
     (message "Cloning %s into %s" name target)
-    (when (!= 0 (shell-command (format "git clone %s %s" repo-url target)))
+    (when (not (= 0 (shell-command (format "git clone %s %s" repo-url target))))
       (error "Failed to clone repo \"%\" to directory \"%s\"" repo-url target))
     (magit-status target)
     (let ((upstream (github-clone-upstream repo)))
