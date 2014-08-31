@@ -40,6 +40,12 @@
 (require 'gh-repos)
 (require 'magit)
 
+(defcustom github-clone-remote-name "upstream"
+  "Default name for upstream remote"
+  :type '(choice (const :tag "Disabled" nil)
+                 (string :tag "Name"))
+  :group 'github-clone)
+
 (defcustom github-clone-url-slot :ssh-url
   "Which slot to use as the URL to clone."
   :type '(choice (const :tag "SSH" :ssh-url)
@@ -61,8 +67,9 @@
                            (eieio-oref fork github-clone-url-slot)))))
 
 (defun github-clone-upstream (repo)
-  (if (eq (oref repo :fork) t)
-      (cons "upstream" (eieio-oref (oref repo :parent) github-clone-url-slot))
+  (if (and (eq (oref repo :fork) t) github-clone-remote-name)
+      (cons github-clone-remote-name
+            (eieio-oref (oref repo :parent) github-clone-url-slot))
     nil))
 
 (defun github-clone-repo (repo directory)
