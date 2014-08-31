@@ -42,15 +42,15 @@
 
 (defcustom github-clone-remote-name "upstream"
   "Default name for upstream remote"
-  :type '(choice (const :tag "Disabled" nil)
-                 (string :tag "Name"))
+  :type '(radio (const :tag "Disabled" nil)
+                (string :tag "Name"))
   :group 'github-clone)
 
 (defcustom github-clone-url-slot :ssh-url
   "Which slot to use as the URL to clone."
-  :type '(choice (const :tag "SSH" :ssh-url)
-                 (const :tag "HTTPS" :clone-url)
-                 (const :tag "Git" :git-url))
+  :type '(radio (const :tag "SSH" :ssh-url)
+                (const :tag "HTTPS" :clone-url)
+                (const :tag "Git" :git-url))
   :group 'github-clone)
 
 (defun github-clone-fork (repo)
