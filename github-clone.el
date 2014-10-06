@@ -4,7 +4,7 @@
 
 ;; Author: Charles L.G. Comstock <dgtized@gmail.com>
 ;; Created: 2 Aug 2014
-;; Version: 0.1
+;; Version: 0.2
 ;; URL: https://github.com/dgtized/github-clone.el
 ;; Keywords: vc, tools
 ;; Package-Requires: ((gh "0.7.2") (magit "1.2.0") (emacs "24"))
@@ -24,9 +24,15 @@
 
 ;;; Commentary:
 
-;; `github-clone' will automatically fork a repo to the user, clone it locally to
-;; a specified directory, and add a remote named upstream if repository is a
-;; fork.
+;; `github-clone' will automatically clone a repo to a specified directory, and
+;; then optionally fork the repo and add a remote named after the github user to
+;; the fork.
+
+;;; Change Log:
+
+;;  0.2 2014-10-06 Switch to hub style cloning; always clone as origin, and
+;;                 optionally add a remote to user's fork named after their
+;;                 username. Removes support for 'upstream' style.
 
 ;;; Todo:
 
@@ -39,12 +45,6 @@
 (require 'gh-users)
 (require 'gh-repos)
 (require 'magit)
-
-(defcustom github-clone-remote-name "upstream"
-  "Default name for upstream remote"
-  :type '(radio (const :tag "Disabled" nil)
-                (string :tag "Name"))
-  :group 'github-clone)
 
 (defcustom github-clone-url-slot :ssh-url
   "Which slot to use as the URL to clone."
@@ -66,12 +66,6 @@
              collect (cons (oref (oref fork :owner) :login)
                            (eieio-oref fork github-clone-url-slot)))))
 
-(defun github-clone-upstream (repo)
-  (if (and (eq (oref repo :fork) t) github-clone-remote-name)
-      (cons github-clone-remote-name
-            (eieio-oref (oref repo :parent) github-clone-url-slot))
-    nil))
-
 (defun github-clone-repo (repo directory)
   (let* ((name (oref repo :name))
          (target (if (file-exists-p directory)
@@ -81,12 +75,21 @@
     (message "Cloning %s into %s from \"%s\"" name target repo-url)
     (if (not (= 0 (shell-command (format "git clone %s %s" repo-url target)
                                  "*github-clone output*")))
-        (error "Failed to clone repo \"%\" to directory \"%s\"" repo-url target))
+        (error "Failed to clone repo \"%s\" to directory \"%s\"" repo-url target))
     (magit-status target)
-    (let ((upstream (github-clone-upstream repo)))
-      (when upstream
-        (message "Adding remote %s" upstream)
-        (magit-add-remote (car upstream) (cdr upstream))))))
+    (when (and (not (string-equal (oref (oref repo :owner) :login)
+                                  (github-clone-user-name)))
+               (yes-or-no-p "Fork repo and add remote? "))
+      (github-clone-fork-repo repo))))
+
+(defun github-clone-fork-repo (repo)
+  (let* ((fork (github-clone-fork repo))
+         (remote (github-clone-user-name))
+         (fork-url (eieio-oref fork github-clone-url-slot)))
+    (if fork-url
+        (progn (message "Adding remote %s -> %s" remote fork-url)
+               (magit-add-remote remote fork-url))
+      (error "Unable to fork %s" (eieio-oref repo github-clone-url-slot)))))
 
 (defun github-clone-repo-name (url)
   (cond ((string-match "\.git$" url)
@@ -117,25 +120,16 @@ USER-REPO-URL can be any of the forms:
   git@github.com:user/repository.git
   https://github.com/user/repository.el.git
 
-If repository is already owned by user, it will simply clone the
-repository to DIRECTORY, otherwise it will attempt to fork the
-repository to user and clone the fork to DIRECTORY.
-
-If DIRECTORY does not exist, it will be created, otherwise it
-expands the repository name in the specified directory.
-
-If repository is a fork then the upstream remote will be added
-automatically."
+It will immediately clone the repository (as the origin) to
+DIRECTORY. Then it prompts to fork the repository and add a
+remote named after the github username to the fork."
   (interactive
    (list (read-from-minibuffer "Url or User/Repo: ")
          (read-directory-name "Directory: " nil default-directory t)))
   (let* ((name (github-clone-repo-name user-repo-url))
          (repo (github-clone-info (car name) (cdr name))))
     (if (eieio-oref repo github-clone-url-slot)
-        (let ((fork (github-clone-fork repo)))
-          (if (eieio-oref fork github-clone-url-slot)
-              (github-clone-repo fork directory)
-            (error "Unable to fork %s" user-repo-url)))
+        (github-clone-repo repo directory)
       (error "Repository %s does not exist" user-repo-url))))
 
 ;;;###autoload

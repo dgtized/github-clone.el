@@ -4,13 +4,13 @@
 
 * Introduction
 
-Easily fork and clone github repos, while ensuring an upstream remote is added referencing the parent repo automatically.
+Easily clone github repos, and optionally fork a copy with the remote named after the users github username.
 
 [[https://travis-ci.org/dgtized/github-clone.el][https://travis-ci.org/dgtized/github-clone.el.png?branch=master]]
 
 * Usage
 
-~M-x github-clone~ will prompt for a repository and directory to clone to. In one shot, it will use the github api to fork the repo if you are not the owner, clone the repo to the specified directory, and add a remote called upstream if the repository is a fork.
+~M-x github-clone~ will prompt for a repository and directory and clone the repository as origin to that directory. It will then optionally fork the repo and add a remote named after the github user.
 
 As example:
 
@@ -20,7 +20,7 @@ As example:
 
 [[https://github.com/sigma/gh.el][gh.el]] will prompt for a github username and password to generate an oauth key. See documentation on [[https://github.com/defunkt/gist.el][gist.el]] and [[*GitHub%20API][GitHub API]] for more details.
 
-After creating an API key, =dgtized/github-clone.el= will be forked to the user authorized by the API key. The forked repository will be cloned into ~$HOME/github-clone.el~, and finally the remote =upstream= will added to the repo as =git@github.com:dgtized/github-clone.el.git=.
+After creating an API key, =dgtized/github-clone.el= will be cloned into ~$HOME/github-clone.el~ as remote =origin=. It will then prompt if the repository should be forked. If so, it will fork the repository to the user authorized by the API key. Finally a remote named after the github user will added to the local repository.
 
 * Install
 
