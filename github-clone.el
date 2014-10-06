@@ -69,7 +69,7 @@
     (message "Cloning %s into %s from \"%s\"" name target repo-url)
     (if (not (= 0 (shell-command (format "git clone %s %s" repo-url target)
                                  "*github-clone output*")))
-        (error "Failed to clone repo \"%\" to directory \"%s\"" repo-url target))
+        (error "Failed to clone repo \"%s\" to directory \"%s\"" repo-url target))
     (magit-status target)
     (when (and (not (string-equal (oref (oref repo :owner) :login)
                                   (github-clone-user-name)))
