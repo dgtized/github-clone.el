@@ -4,7 +4,7 @@
 
 ;; Author: Charles L.G. Comstock <dgtized@gmail.com>
 ;; Created: 2 Aug 2014
-;; Version: 0.1
+;; Version: 0.2
 ;; URL: https://github.com/dgtized/github-clone.el
 ;; Keywords: vc, tools
 ;; Package-Requires: ((gh "0.7.2") (magit "1.2.0") (emacs "24"))
@@ -27,6 +27,12 @@
 ;; `github-clone' will automatically clone a repo to a specified directory, and
 ;; then optionally fork the repo and add a remote named after the github user to
 ;; the fork.
+
+;;; Change Log:
+
+;;  0.2 2014-10-06 Switch to hub style cloning; always clone as origin, and
+;;                 optionally add a remote to user's fork named after their
+;;                 username. Removes support for 'upstream' style.
 
 ;;; Todo:
 
