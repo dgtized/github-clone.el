@@ -71,7 +71,9 @@
                                  "*github-clone output*")))
         (error "Failed to clone repo \"%\" to directory \"%s\"" repo-url target))
     (magit-status target)
-    (when (yes-or-no-p "Fork repo and add remote? ")
+    (when (and (not (string-equal (oref (oref repo :owner) :login)
+                                  (github-clone-user-name)))
+               (yes-or-no-p "Fork repo and add remote? "))
       (github-clone-fork-repo repo))))
 
 (defun github-clone-fork-repo (repo)
