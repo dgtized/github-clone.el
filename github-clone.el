@@ -76,7 +76,7 @@
     (if (not (= 0 (shell-command (format "git clone %s %s" repo-url target)
                                  "*github-clone output*")))
         (error "Failed to clone repo \"%s\" to directory \"%s\"" repo-url target))
-    (magit-status target)
+    (magit-status-internal target)
     (when (and (not (string-equal (oref (oref repo :owner) :login)
                                   (github-clone-user-name)))
                (yes-or-no-p "Fork repo and add remote? "))
@@ -88,7 +88,7 @@
          (fork-url (eieio-oref fork github-clone-url-slot)))
     (if fork-url
         (progn (message "Adding remote %s -> %s" remote fork-url)
-               (magit-add-remote remote fork-url))
+               (magit-remote-add remote fork-url))
       (error "Unable to fork %s" (eieio-oref repo github-clone-url-slot)))))
 
 (defun github-clone-repo-name (url)
