@@ -28,7 +28,7 @@ github-clone.el uses [[https://github.com/sigma/gh.el][gh.el]] as a dependency, 
 
 ** Via Package.el
 
-Using the [[https://melpa.milkbox.net][MELPA]] package archive, 
+Using the [[https://melpa.org][MELPA]] package archive,
 
  : M-x package-install [RET] github-clone [RET]
 
