@@ -92,7 +92,7 @@
       (error "Unable to fork %s" (eieio-oref repo github-clone-url-slot)))))
 
 (defun github-clone-repo-name (url)
-  (cond ((string-match "\.git$" url)
+  (cond ((string-match "\\.git$" url)
          (github-clone-repo-name (replace-match "" nil nil url)))
         ((string-match "\\([[:alnum:]\-_.]+\\)/\\([[:alnum:]\-_.]+\\)$" url)
          (cons (match-string 1 url) (match-string 2 url)))
