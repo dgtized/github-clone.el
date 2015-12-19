@@ -6,6 +6,7 @@
 
 Easily clone github repos, and optionally fork a copy with the remote named after the users github username.
 
+[[http://melpa.org/#/github-clone][file:http://melpa.org/packages/github-clone-badge.svg]]
 [[https://travis-ci.org/dgtized/github-clone.el][https://travis-ci.org/dgtized/github-clone.el.png?branch=master]]
 
 * Usage
