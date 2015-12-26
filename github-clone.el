@@ -1,6 +1,6 @@
 ;;; github-clone.el --- Fork and clone github repos  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2014  Charles L.G. Comstock
+;; Copyright (C) 2015-2016  Charles L.G. Comstock
 
 ;; Author: Charles L.G. Comstock <dgtized@gmail.com>
 ;; Created: 2 Aug 2014
