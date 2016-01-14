@@ -14,6 +14,10 @@
   (should (equal (github-clone-repo-name "https://github.com/dgtized/github-clone.el")
                  (cons "dgtized" "github-clone.el"))))
 
+(ert-deftest github-clone-repo-name-matches-url-trailing-slashes ()
+  (should (equal (github-clone-repo-name "https://github.com/dgtized/github-clone.el/")
+                 (cons "dgtized" "github-clone.el"))))
+
 (ert-deftest github-clone-repo-name-works-with-magit ()
   (should (equal (github-clone-repo-name "https://github.com/magit/magit")
                  (cons "magit" "magit"))))
