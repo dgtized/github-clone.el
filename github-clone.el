@@ -112,6 +112,28 @@
   (github-clone-repo-name
    (magit-get "remote" remote "url")))
 
+(defun github-clone-add-ancestor-remote (child-remote &optional parent-slot)
+  (cl-destructuring-bind (user . repo)
+      (github-clone-get-repo-name-from-remote child-remote)
+    (let* ((child-repo (github-clone-info user repo))
+           (ancestor-repo (eieio-oref child-repo parent-slot))
+           (remote-url (eieio-oref ancestor-repo github-clone-url-slot))
+           (owner (eieio-oref ancestor-repo :owner))
+           (owner-name (eieio-oref owner :login)))
+      (magit-remote-add owner-name remote-url))))
+
+;;;###autoload
+(defun github-clone-add-parent-remote (child-remote)
+  "Obtain the parent of CHILD-REMOTE and add it as a remote."
+  (interactive (list (magit-read-remote "Select a child remote")))
+  (github-clone-add-ancestor-remote child-remote :parent))
+
+;;;###autoload
+(defun github-clone-add-source-remote (child-remote)
+  "Obtain the original repository of CHILD-REMOTE and add it as a remote."
+  (interactive (list (magit-read-remote "Select a child remote")))
+  (github-clone-add-ancestor-remote child-remote :source))
+
 ;;;###autoload
 (defun github-clone-fork-remote (&optional remote)
   "Fork REMOTE to the current user."
