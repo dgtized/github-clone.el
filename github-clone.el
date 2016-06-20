@@ -34,11 +34,6 @@
 ;;                 optionally add a remote to user's fork named after their
 ;;                 username. Removes support for 'upstream' style.
 
-;;; Todo:
-
-;; Use `github-clone-remotes' to add named remotes easily for repositories in
-;; the same network.
-
 ;;; Code:
 
 (require 'eieio)
@@ -60,8 +55,10 @@
   (oref (gh-repos-repo-get (gh-repos-api "api") repo-id user) :data))
 
 (defun github-clone-remotes (user repo-id)
-  (let* ((repo (github-clone-info user repo-id))
-         (forks (oref (gh-repos-forks-list (gh-repos-api "api") repo) :data)))
+  (github-clone-remotes-from-repo (github-clone-info user repo-id)))
+
+(defun github-clone-remotes-from-repo (repo)
+  (let ((forks (oref (gh-repos-forks-list (gh-repos-api "api") repo) :data)))
     (cl-loop for fork in forks
              collect (cons (oref (oref fork :owner) :login)
                            (eieio-oref fork github-clone-url-slot)))))
@@ -124,16 +121,24 @@
     (github-clone-fork-repo (github-clone-info user repo))))
 
 ;;;###autoload
-(defun github-clone-add-existing-remote (&optional parent-remote)
-  "Add a remote that is an existing fork of PARENT-REMOTE."
+(defun github-clone-add-existing-remote (&optional selected-remote-name use-source)
+  "Add a remote that is an existing fork of SELECTED-REMOTE-NAME.
+
+When USE-SOURCE is set, use the source remote of SELECTED-REMOTE-NAME"
   (interactive
-   (list (magit-read-remote "Select the remote whose network you would like to search")))
-  (cl-destructuring-bind (user . repo)
-      (github-clone-get-repo-name-from-remote parent-remote)
-    (let ((candidates (github-clone-remotes user repo)))
-      (cl-destructuring-bind (selected-user . selected-repo)
+   (list (magit-read-remote
+          "Select the remote whose network you would like to search") t))
+  (cl-destructuring-bind (user . repo-id)
+      (github-clone-get-repo-name-from-remote selected-remote-name)
+    (let* ((selected-repo (github-clone-info user repo-id))
+           (network-repo (let ((source (oref selected-repo source)))
+                           (if (and use-source source
+                                    (eieio-oref source github-clone-url-slot))
+                               source selected-repo)))
+           (candidates (github-clone-remotes-from-repo network-repo)))
+      (cl-destructuring-bind (selected-user . selected-repo-url)
           (assoc (completing-read "Select a remote to add: " candidates) candidates)
-        (magit-remote-add selected-user selected-repo)))))
+        (magit-remote-add selected-user selected-repo-url)))))
 
 ;;;###autoload
 (defun github-clone (user-repo-url directory)
