@@ -108,6 +108,33 @@
           (oref (oref (gh-users-get (gh-users-api "api")) :data) :login)))
   github-clone--user)
 
+(defun github-clone-get-repo-name-from-remote (&optional remote)
+  (unless remote
+    (setq remote
+          (magit-read-remote "Select a remote")))
+  (github-clone-repo-name
+   (magit-get "remote" remote "url")))
+
+;;;###autoload
+(defun github-clone-fork-remote (&optional remote)
+  "Fork REMOTE to the current user."
+  (interactive (list (magit-read-remote "Select a remote to fork")))
+  (cl-destructuring-bind (user . repo)
+      (github-clone-get-repo-name-from-remote remote)
+    (github-clone-fork-repo (github-clone-info user repo))))
+
+;;;###autoload
+(defun github-clone-add-existing-remote (&optional parent-remote)
+  "Add a remote that is an existing fork of PARENT-REMOTE."
+  (interactive
+   (list (magit-read-remote "Select the remote whose network you would like to search")))
+  (cl-destructuring-bind (user . repo)
+      (github-clone-get-repo-name-from-remote parent-remote)
+    (let ((candidates (github-clone-remotes user repo)))
+      (cl-destructuring-bind (selected-user . selected-repo)
+          (assoc (completing-read "Select a remote to add: " candidates) candidates)
+        (magit-remote-add selected-user selected-repo)))))
+
 ;;;###autoload
 (defun github-clone (user-repo-url directory)
   "Fork and clone USER-REPO-URL into DIRECTORY.
