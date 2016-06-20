@@ -130,7 +130,7 @@
 
 ;;;###autoload
 (defun github-clone-add-source-remote (child-remote)
-  "Obtain the original repository of CHILD-REMOTE and add it as a remote."
+  "Obtain the original ancestor of CHILD-REMOTE and add it as a remote."
   (interactive (list (magit-read-remote "Select a child remote")))
   (github-clone-add-ancestor-remote child-remote :source))
 
@@ -176,7 +176,7 @@ USER-REPO-URL can be any of the forms:
   https://github.com/user/repository.el.git
 
 It will immediately clone the repository (as the origin) to
-DIRECTORY. Then it prompts to fork the repository and add a
+DIRECTORY.  Then it prompts to fork the repository and add a
 remote named after the github username to the fork."
   (interactive
    (list (read-from-minibuffer "Url or User/Repo: ")
@@ -189,7 +189,10 @@ remote named after the github username to the fork."
 
 ;;;###autoload
 (defun eshell/github-clone (user-repo-url &optional directory)
-  "Eshell alias uses current directory as default."
+  "An eshell alias for `github-clone'.
+
+Fork and clone USER-REPO-URL into DIRECTORY, which defaults to
+the current directory in eshell (`default-directory')."
   (funcall 'github-clone user-repo-url (or directory default-directory)))
 
 (provide 'github-clone)
