@@ -180,9 +180,11 @@ DIRECTORY.  Then it prompts to fork the repository and add a
 remote named after the github username to the fork."
   (interactive
    (list (read-from-minibuffer "Url or User/Repo: ")
-         (read-directory-name "Directory: " nil default-directory t)))
+         (read-directory-name "Directory: " nil default-directory)))
   (let* ((name (github-clone-repo-name user-repo-url))
          (repo (github-clone-info (car name) (cdr name))))
+    (unless (file-directory-p directory)
+      (make-directory directory t))
     (if (eieio-oref repo github-clone-url-slot)
         (github-clone-repo repo directory)
       (error "Repository %s does not exist" user-repo-url))))
