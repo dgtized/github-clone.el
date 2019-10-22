@@ -41,6 +41,12 @@
 (require 'gh-repos)
 (require 'magit)
 
+(defcustom github-clone-dir (locate-user-emacs-file "github-clone")
+  "Default as clone destination directory.
+Using in`github-clone-in-default-directory'."
+  :type 'string
+  :group 'github-clone)
+
 (defcustom github-clone-url-slot :ssh-url
   "Which slot to use as the URL to clone."
   :type '(radio (const :tag "SSH" :ssh-url)
@@ -186,6 +192,28 @@ remote named after the github username to the fork."
     (if (eieio-oref repo github-clone-url-slot)
         (github-clone-repo repo directory)
       (error "Repository %s does not exist" user-repo-url))))
+
+;;;###autoload
+(defun github-clone-in-default-directory (user-repo-url)
+  "Fork and clone USER-REPO-URL into `github-clone-dir'.
+
+USER-REPO-URL can be any of the forms:
+
+  repository
+  user/repository
+  organization/repository
+  https://github.com/user/repository
+  git@github.com:user/repository.git
+  https://github.com/user/repository.el.git
+
+It will immediately clone the repository (as the origin) to
+`github-clone-dir'.  Then it prompts to fork the repository and
+add a remote named after the github username to the fork."
+  (interactive
+   (list (read-from-minibuffer "Url or User/Repo: ")))
+  (unless (file-directory-p github-clone-dir)
+    (make-directory github-clone-dir))
+  (apply #'github-clone `(,user-repo-url ,github-clone-dir)))
 
 ;;;###autoload
 (defun eshell/github-clone (user-repo-url &optional directory)
