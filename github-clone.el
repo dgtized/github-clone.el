@@ -7,7 +7,7 @@
 ;; Version: 0.2
 ;; URL: https://github.com/dgtized/github-clone.el
 ;; Keywords: vc, tools
-;; Package-Requires: ((gh "0.7.2") (magit "2.1.0") (emacs "24.4"))
+;; Package-Requires: ((gh "0.7.2") (magit "3.0.0") (emacs "24.4"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@
     (if (not (= 0 (shell-command (format "git clone %s %s" repo-url target)
                                  "*github-clone output*")))
         (error "Failed to clone repo \"%s\" to directory \"%s\"" repo-url target))
-    (magit-status-internal target)
+    (magit-status-setup-buffer target)
     (when (and (not (string-equal (oref (oref repo :owner) :login)
                                   (github-clone-user-name)))
                (yes-or-no-p "Fork repo and add remote? "))
