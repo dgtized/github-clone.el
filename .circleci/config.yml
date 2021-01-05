@@ -1,0 +1,9 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: silex/emacs:27-ci-cask
+    working_directory: ~/github-clone.el
+    steps:
+      - checkout
+      - run: PATH="/root/.cask/bin:$PATH" make test
