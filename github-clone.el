@@ -7,7 +7,7 @@
 ;; Version: 0.2
 ;; URL: https://github.com/dgtized/github-clone.el
 ;; Keywords: vc, tools
-;; Package-Requires: ((gh "1.0.1") (magit "3.0.0") (emacs "24.4"))
+;; Package-Requires: ((gh "1.0.1") (magit "3.0.0") (emacs "25.1"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
