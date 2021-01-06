@@ -41,6 +41,9 @@
 (require 'gh-repos)
 (require 'magit)
 
+;; Silence unknown slot warnings during compilation
+(eieio-declare-slots :data :login :name :owner)
+
 (defcustom github-clone-url-slot :ssh-url
   "Which slot to use as the URL to clone."
   :type '(radio (const :tag "SSH" :ssh-url)
