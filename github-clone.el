@@ -1,13 +1,13 @@
 ;;; github-clone.el --- Fork and clone github repos  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2015-2016  Charles L.G. Comstock
+;; Copyright (C) 2015-2021  Charles L.G. Comstock
 
 ;; Author: Charles L.G. Comstock <dgtized@gmail.com>
 ;; Created: 2 Aug 2014
 ;; Version: 0.2
 ;; URL: https://github.com/dgtized/github-clone.el
 ;; Keywords: vc, tools
-;; Package-Requires: ((gh "0.7.2") (magit "2.1.0") (emacs "24.4"))
+;; Package-Requires: ((gh "1.0.1") (magit "3.0.0") (emacs "25.1"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -39,7 +39,10 @@
 (require 'eieio)
 (require 'gh-users)
 (require 'gh-repos)
-(require 'magit)
+(require 'magit-status)
+
+;; Silence unknown slot warnings during compilation
+(eieio-declare-slots :data :login :name :owner)
 
 (defcustom github-clone-url-slot :ssh-url
   "Which slot to use as the URL to clone."
@@ -49,16 +52,17 @@
   :group 'github-clone)
 
 (defun github-clone-fork (repo)
-  (oref (gh-repos-fork (gh-repos-api "api") repo) :data))
+  (oref (gh-repos-fork (gh-repos-api) repo) :data))
 
 (defun github-clone-info (user repo-id)
-  (oref (gh-repos-repo-get (gh-repos-api "api") repo-id user) :data))
+  (oref (gh-repos-repo-get (gh-repos-api) repo-id user) :data))
 
 (defun github-clone-remotes (user repo-id)
   (github-clone-remotes-from-repo (github-clone-info user repo-id)))
 
 (defun github-clone-remotes-from-repo (repo)
-  (let ((forks (oref (gh-repos-forks-list (gh-repos-api "api") repo) :data)))
+  "Constructs alist of github usernames to clone-url."
+  (let ((forks (oref (gh-repos-forks-list (gh-repos-api) repo) :data)))
     (cl-loop for fork in forks
              collect (cons (oref (oref fork :owner) :login)
                            (eieio-oref fork github-clone-url-slot)))))
@@ -73,7 +77,7 @@
     (if (not (= 0 (shell-command (format "git clone %s %s" repo-url target)
                                  "*github-clone output*")))
         (error "Failed to clone repo \"%s\" to directory \"%s\"" repo-url target))
-    (magit-status-internal target)
+    (magit-status-setup-buffer target)
     (when (and (not (string-equal (oref (oref repo :owner) :login)
                                   (github-clone-user-name)))
                (yes-or-no-p "Fork repo and add remote? "))
@@ -102,7 +106,7 @@
 (defun github-clone-user-name ()
   (unless github-clone--user
     (setq github-clone--user
-          (oref (oref (gh-users-get (gh-users-api "api")) :data) :login)))
+          (oref (oref (gh-users-get (gh-users-api)) :data) :login)))
   github-clone--user)
 
 (defun github-clone-get-repo-name-from-remote (&optional remote)
