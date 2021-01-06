@@ -58,6 +58,7 @@
   (github-clone-remotes-from-repo (github-clone-info user repo-id)))
 
 (defun github-clone-remotes-from-repo (repo)
+  "Constructs alist of github usernames to clone-url."
   (let ((forks (oref (gh-repos-forks-list (gh-repos-api) repo) :data)))
     (cl-loop for fork in forks
              collect (cons (oref (oref fork :owner) :login)
