@@ -5,5 +5,4 @@ jobs:
       - image: silex/emacs:27-ci-cask
     steps:
       - checkout
-      - run: which cask
       - run: make test
