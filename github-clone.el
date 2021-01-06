@@ -39,7 +39,7 @@
 (require 'eieio)
 (require 'gh-users)
 (require 'gh-repos)
-(require 'magit)
+(require 'magit-status)
 
 ;; Silence unknown slot warnings during compilation
 (eieio-declare-slots :data :login :name :owner)
