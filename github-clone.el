@@ -51,6 +51,12 @@
                 (const :tag "Git" :git-url))
   :group 'github-clone)
 
+(defcustom github-clone-default-directory nil
+  "Where you want by default to save your cloned repos"
+  :type 'directory
+  :group 'github-clone)
+
+
 (defun github-clone-fork (repo)
   (oref (gh-repos-fork (gh-repos-api) repo) :data))
 
@@ -184,7 +190,7 @@ DIRECTORY.  Then it prompts to fork the repository and add a
 remote named after the github username to the fork."
   (interactive
    (list (read-from-minibuffer "Url or User/Repo: ")
-         (read-directory-name "Directory: " nil default-directory)))
+         (read-directory-name "Directory: " github-clone-default-directory nil)))
   (let* ((name (github-clone-repo-name user-repo-url))
          (repo (github-clone-info (car name) (cdr name))))
     (unless (file-directory-p directory)
@@ -199,7 +205,7 @@ remote named after the github username to the fork."
 
 Fork and clone USER-REPO-URL into DIRECTORY, which defaults to
 the current directory in eshell (`default-directory')."
-  (funcall 'github-clone user-repo-url (or directory default-directory)))
+  (funcall 'github-clone user-repo-url (or directory github-clone-default-directory default-directory)))
 
 (provide 'github-clone)
 ;;; github-clone.el ends here
