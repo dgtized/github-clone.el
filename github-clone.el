@@ -201,7 +201,9 @@ remote named after the github username to the fork."
 
 ;;;###autoload
 (defun github-clone-in-default-directory (user-repo-url)
-  "An alias for `github-clone' with `github-clone-directory' as the default directory."
+  "Fork and clone USER-REPO-URL to `github-default-directory'.
+
+See `github-clone' for explanation of arguments."
   (interactive
    (list (read-from-minibuffer "Url or User/Repo: ")))
   (funcall 'github-clone user-repo-url
