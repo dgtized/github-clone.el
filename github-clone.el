@@ -204,7 +204,8 @@ remote named after the github username to the fork."
   "An alias for `github-clone' with `github-clone-directory' as the default directory."
   (interactive
    (list (read-from-minibuffer "Url or User/Repo: ")))
-  (funcall 'github-clone user-repo-url (or github-clone-directory default-directory)))
+  (funcall 'github-clone user-repo-url
+           (or github-clone-directory default-directory)))
 
 ;;;###autoload
 (defun eshell/github-clone (user-repo-url &optional directory)
@@ -212,7 +213,8 @@ remote named after the github username to the fork."
 
 Fork and clone USER-REPO-URL into DIRECTORY, which defaults to
 the current directory in eshell (`default-directory')."
-  (funcall 'github-clone user-repo-url (or directory github-clone-directory default-directory)))
+  (funcall 'github-clone user-repo-url
+           (or directory github-clone-directory default-directory)))
 
 (provide 'github-clone)
 ;;; github-clone.el ends here
