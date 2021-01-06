@@ -5,4 +5,5 @@ jobs:
       - image: silex/emacs:27-ci-cask
     steps:
       - checkout
-      - run: PATH="/root/.cask/bin:$PATH" make test
+      - run: which cask
+      - run: make test
