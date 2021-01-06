@@ -44,17 +44,17 @@
 ;; Silence unknown slot warnings during compilation
 (eieio-declare-slots :data :login :name :owner)
 
+(defcustom github-clone-directory nil
+  "Default directory to clone new repos and forks to, if `nil'
+reverts to using `default-directory'."
+  :type 'directory
+  :group 'github-clone)
+
 (defcustom github-clone-url-slot :ssh-url
   "Which slot to use as the URL to clone."
   :type '(radio (const :tag "SSH" :ssh-url)
                 (const :tag "HTTPS" :clone-url)
                 (const :tag "Git" :git-url))
-  :group 'github-clone)
-
-(defcustom github-clone-directory nil
-  "Default directory to clone new repos and forks to, if `nil'
-reverts to using `default-directory'."
-  :type 'directory
   :group 'github-clone)
 
 (defun github-clone-fork (repo)
