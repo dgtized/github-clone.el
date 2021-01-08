@@ -23,6 +23,23 @@ As example:
 
 After creating an API key, =dgtized/github-clone.el= will be cloned into ~$HOME/github-clone.el~ as remote =origin=. It will then prompt if the repository should be forked. If so, it will fork the repository to the user authorized by the API key. Finally a remote named after the github user will added to the local repository.
 
+** Adding Remotes
+
+The function =github-clone-add-existing-remote= will prompt for a remote,
+find all forks of that remote on github, and then prompt to add any of those
+forks as a named remote. As example, in a checkout of this repo, running;
+
+  : M-x github-clone-add-existing-remote [RET] origin
+
+Will execute a =completing-read= prompting to add a fork of =github-clone.el= as
+a new remote.
+
+Similarly, =github-clone-add-parent-remote= and =github-clone-add-source-remote=
+can be used to add a parent or source remote.
+
+These are convenience methods which make it easier to add collaborating repos as
+remotes in order to fetch branches and test pull requests.
+
 * Install
 
 github-clone.el uses [[https://github.com/sigma/gh.el][gh.el]] as a dependency, so it's easiest to install via package.el.
