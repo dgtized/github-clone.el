@@ -4,7 +4,7 @@
 
 ;; Author: Charles L.G. Comstock <dgtized@gmail.com>
 ;; Created: 2 Aug 2014
-;; Version: 0.2
+;; Version: 0.3
 ;; URL: https://github.com/dgtized/github-clone.el
 ;; Keywords: vc, tools
 ;; Package-Requires: ((gh "1.0.1") (magit "3.0.0") (emacs "25.1"))
@@ -30,6 +30,9 @@
 
 ;;; Change Log:
 
+;;  0.3 2021-01-05 Support cloning to a `github-clone-directory' by default over
+;;                 current directory.
+;;
 ;;  0.2 2014-10-06 Switch to hub style cloning; always clone as origin, and
 ;;                 optionally add a remote to user's fork named after their
 ;;                 username. Removes support for 'upstream' style.
@@ -43,6 +46,12 @@
 
 ;; Silence unknown slot warnings during compilation
 (eieio-declare-slots :data :login :name :owner)
+
+(defcustom github-clone-directory nil
+  "Default directory to clone new repos and forks to, if `nil'
+reverts to using `default-directory'."
+  :type 'directory
+  :group 'github-clone)
 
 (defcustom github-clone-url-slot :ssh-url
   "Which slot to use as the URL to clone."
@@ -184,12 +193,24 @@ DIRECTORY.  Then it prompts to fork the repository and add a
 remote named after the github username to the fork."
   (interactive
    (list (read-from-minibuffer "Url or User/Repo: ")
-         (read-directory-name "Directory: " nil default-directory t)))
+         (read-directory-name "Directory: " github-clone-directory)))
   (let* ((name (github-clone-repo-name user-repo-url))
          (repo (github-clone-info (car name) (cdr name))))
+    (unless (file-directory-p directory)
+      (make-directory directory t))
     (if (eieio-oref repo github-clone-url-slot)
         (github-clone-repo repo directory)
       (error "Repository %s does not exist" user-repo-url))))
+
+;;;###autoload
+(defun github-clone-in-default-directory (user-repo-url)
+  "Fork and clone USER-REPO-URL to `github-default-directory'.
+
+See `github-clone' for explanation of arguments."
+  (interactive
+   (list (read-from-minibuffer "Url or User/Repo: ")))
+  (funcall 'github-clone user-repo-url
+           (or github-clone-directory default-directory)))
 
 ;;;###autoload
 (defun eshell/github-clone (user-repo-url &optional directory)
@@ -197,7 +218,8 @@ remote named after the github username to the fork."
 
 Fork and clone USER-REPO-URL into DIRECTORY, which defaults to
 the current directory in eshell (`default-directory')."
-  (funcall 'github-clone user-repo-url (or directory default-directory)))
+  (funcall 'github-clone user-repo-url
+           (or directory github-clone-directory default-directory)))
 
 (provide 'github-clone)
 ;;; github-clone.el ends here
